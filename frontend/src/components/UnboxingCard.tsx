@@ -93,7 +93,7 @@ export default function UnboxingCard({ card }: Props) {
     // Анимация длится 700мс → переключаем на 350мс
     setTimeout(() => {
       setShowBack(nextFlipped);
-    }, 100);
+    }, 250);
   };
 
   return (
@@ -124,7 +124,7 @@ export default function UnboxingCard({ card }: Props) {
           className="w-full h-full relative"
           style={{
             transform: isFlipped ? 'rotateY(180deg)' : 'rotateX(0deg) rotateY(0deg)',
-            transition: 'transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            transition: 'transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
             transformStyle: 'preserve-3d',
           }}
         >
