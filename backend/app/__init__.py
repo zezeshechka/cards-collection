@@ -1,0 +1,1 @@
+# Cards Collection - пакет приложения
