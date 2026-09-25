@@ -93,7 +93,7 @@ export default function UnboxingCard({ card }: Props) {
     // Анимация длится 700мс → переключаем на 350мс
     setTimeout(() => {
       setShowBack(nextFlipped);
-    }, 350);
+    }, 250);
   };
 
   return (
