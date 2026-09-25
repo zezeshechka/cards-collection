@@ -45,7 +45,6 @@ export default function UnboxingCard({ card }: Props) {
 
   const style = RARITY_STYLES[card.rarity] || RARITY_STYLES.common;
 
-  // Двигаем карту и блик НАПРЯМУЮ через DOM — без ререндеров
   const handleMove = useCallback(
     (clientX: number, clientY: number) => {
       if (isFlipped || !cardRef.current) return;
@@ -58,12 +57,9 @@ export default function UnboxingCard({ card }: Props) {
       const rotX = -((y - cy) / cy) * 20;
       const rotY = ((x - cx) / cx) * 20;
 
-      // Прямое изменение transform без ререндера
       if (wrapperRef.current) {
         wrapperRef.current.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg)`;
       }
-
-      // Двигаем фон блика напрямую
       if (sheenRef.current) {
         sheenRef.current.style.backgroundPosition = `${(x / rect.width) * 100}% ${(y / rect.height) * 100}%`;
         sheenRef.current.style.opacity = '0.9';
@@ -101,7 +97,7 @@ export default function UnboxingCard({ card }: Props) {
       }
       onTouchEnd={handleReset}
     >
-      {/* ==== GLOW позади карты (по редкости) ==== */}
+      {/* GLOW позади карты */}
       <div
         className="absolute rounded-full blur-3xl opacity-60 animate-pulse pointer-events-none"
         style={{
@@ -110,33 +106,26 @@ export default function UnboxingCard({ card }: Props) {
         }}
       />
 
-      {/* ==== Враппер 3D ==== */}
-      <div
-        ref={cardRef}
-        className="w-full h-full relative"
-        style={{
-          transformStyle: 'preserve-3d',
-          transition: 'transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-        }}
-      >
+      {/* Враппер */}
+      <div ref={cardRef} className="w-full h-full relative">
         <div
           ref={wrapperRef}
           className="w-full h-full relative"
           style={{
-            transformStyle: 'preserve-3d',
-            transform: isFlipped ? 'rotateY(180deg)' : 'rotateX(0deg) rotateY(0deg)',
-            transition: 'transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            transform: 'rotateX(0deg) rotateY(0deg)',
+            transition: 'transform 0.4s ease-out',
           }}
         >
           {/* ---- FRONT ---- */}
           <div
             className={`absolute inset-0 rounded-3xl bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 border-2 overflow-hidden flex flex-col justify-between p-5 ${style.border}`}
             style={{
-              backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden',
+              opacity: isFlipped ? 0 : 1,
+              pointerEvents: isFlipped ? 'none' : 'auto',
+              transition: 'opacity 0.15s ease-in-out',
+              visibility: isFlipped ? 'hidden' : 'visible',
             }}
           >
-            {/* Holographic sheen */}
             <div
               ref={sheenRef}
               className="absolute inset-0 holo-sheen pointer-events-none z-20"
@@ -188,9 +177,10 @@ export default function UnboxingCard({ card }: Props) {
           <div
             className="absolute inset-0 rounded-3xl bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 border-2 border-amber-500/40 shadow-2xl p-6 flex flex-col justify-between overflow-hidden"
             style={{
-              backfaceVisibility: 'hidden',
-              WebkitBackfaceVisibility: 'hidden',
-              transform: 'rotateY(180deg)',
+              opacity: isFlipped ? 1 : 0,
+              pointerEvents: isFlipped ? 'auto' : 'none',
+              transition: 'opacity 0.15s ease-in-out',
+              visibility: isFlipped ? 'visible' : 'hidden',
             }}
           >
             <div className="absolute inset-0 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px] opacity-10" />
