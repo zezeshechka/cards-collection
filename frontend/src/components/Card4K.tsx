@@ -96,8 +96,36 @@ const Card4K = memo(function Card4K({ card, count, onClick, size = 'normal' }: P
     setFoilX((mouseX / rect.width) * 100);
     setFoilY((mouseY / rect.height) * 100);
   };
+    const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    if (e.touches.length === 0) return;
+    const touch = e.touches[0];
+    const rect = cardRef.current.getBoundingClientRect();
+    const touchX = touch.clientX - rect.left;
+    const touchY = touch.clientY - rect.top;
+
+    // Проверяем, что палец внутри карточки
+    if (touchX < 0 || touchX > rect.width || touchY < 0 || touchY > rect.height) return;
+
+    const rX = -((touchY / rect.height) * 30 - 15);
+    const rY = (touchX / rect.width) * 30 - 15;
+
+    setRotateX(rX);
+    setRotateY(rY);
+    setFoilX((touchX / rect.width) * 100);
+    setFoilY((touchY / rect.height) * 100);
+    setIsHovered(true); // Включаем голографический блик
+  };
 
   const handleMouseLeave = () => {
+    setIsHovered(false);
+    setRotateX(0);
+    setRotateY(0);
+    setFoilX(50);
+    setFoilY(50);
+  };
+
+  const handleTouchEnd = () => {
     setIsHovered(false);
     setRotateX(0);
     setRotateY(0);
@@ -117,6 +145,9 @@ const Card4K = memo(function Card4K({ card, count, onClick, size = 'normal' }: P
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchMove}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       <div
         className="w-full h-full transition-transform duration-200 ease-out preserve-3d relative rounded-3xl"
