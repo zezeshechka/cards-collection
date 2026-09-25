@@ -2,18 +2,87 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Кастомные стили для карточек */
+/* ==================== Кастомные стили ==================== */
+
+/* Perspective (для 3D) */
 .perspective-1000 {
   perspective: 1200px;
 }
 
-.preserve-3d {
+/* 3D-сцена (контейнер карты) */
+.scene-container {
+  perspective: 1200px;
   transform-style: preserve-3d;
 }
 
-.backface-hidden {
-  backface-visibility: hidden;
+/* Враппер карты (родитель, который вращается) */
+.card-3d-wrapper {
+  transform-style: preserve-3d;
+  transition: transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
+
+/* Грани карты */
+.card-face {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Задняя грань */
+.card-back {
+  transform: rotateY(180deg);
+}
+
+/* ---- Holographic sheen (радужный блик) ---- */
+.holo-sheen {
+  background: linear-gradient(
+    135deg,
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.35) 25%,
+    rgba(255, 0, 128, 0.3) 45%,
+    rgba(0, 255, 255, 0.3) 55%,
+    rgba(255, 215, 0, 0.35) 75%,
+    rgba(255,255,255,0) 100%
+  );
+  mix-blend-mode: color-dodge;
+  pointer-events: none;
+  background-size: 200% 200%;
+  transition: background-position 0.1s ease-out;
+}
+
+/* ==================== Анимации ==================== */
+
+/* Shake (тряска бустера) */
+@keyframes custom-shake {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  20% { transform: translate(-6px, 4px) rotate(-1.5deg); }
+  40% { transform: translate(6px, -4px) rotate(1.5deg); }
+  60% { transform: translate(-4px, -3px) rotate(-0.8deg); }
+  80% { transform: translate(4px, 3px) rotate(0.8deg); }
+}
+.animate-shake {
+  animation: custom-shake 0.35s ease-in-out infinite;
+}
+
+/* Floating (парение бустера) */
+@keyframes float-pack {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-10px) rotate(1deg); }
+}
+.animate-float-pack {
+  animation: float-pack 3s ease-in-out infinite;
+}
+
+/* Pulse ring (цветное свечение за бустером) */
+@keyframes pulse-ring {
+  0% { transform: scale(0.92); opacity: 0.8; }
+  50% { transform: scale(1.18); opacity: 0.2; }
+  100% { transform: scale(0.92); opacity: 0.8; }
+}
+.animate-pulse-ring {
+  animation: pulse-ring 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* ==================== Утилиты ==================== */
 
 .rotate-y-180 {
   transform: rotateY(180deg);
@@ -26,15 +95,7 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
-
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
-}
-
-body {
-  margin: 0;
-  background: #07080c;
-  color: white;
-  font-family: system-ui, -apple-system, sans-serif;
 }
