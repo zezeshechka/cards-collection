@@ -18,8 +18,8 @@ dp = Dispatcher()
 
 
 def get_webapp_url() -> str:
-    """URL Mini App. Пока не задеплоен — заглушка."""
-    return "https://example.com"
+    """URL Mini App."""
+    return "https://cards-collection-six.vercel.app"
 
 
 def main_keyboard() -> InlineKeyboardMarkup:
