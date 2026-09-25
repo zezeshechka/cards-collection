@@ -67,3 +67,7 @@ async def root():
         "version": "0.1.0",
         "docs": "/docs",
     }
+@app.get("/ping")
+async def ping():
+    """Лёгкий пинг для cron-job.org (пустой ответ)."""
+    return {"p": 1}
