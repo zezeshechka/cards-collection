@@ -38,6 +38,8 @@ interface Props {
 
 export default function UnboxingCard({ card }: Props) {
   const [isFlipped, setIsFlipped] = useState(false);
+  // Новый флаг: показывать ли заднюю грань (меняется посередине анимации)
+  const [showBack, setShowBack] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const sheenRef = useRef<HTMLDivElement>(null);
@@ -79,10 +81,19 @@ export default function UnboxingCard({ card }: Props) {
   }, [isFlipped]);
 
   const handleFlip = () => {
-    setIsFlipped((v) => !v);
+    const nextFlipped = !isFlipped;
+    setIsFlipped(nextFlipped);
+
+    // Мгновенно сбрасываем наклон, если он был
     if (wrapperRef.current) {
       wrapperRef.current.style.transform = 'rotateX(0deg) rotateY(0deg)';
     }
+
+    // КЛЮЧЕВОЙ МОМЕНТ: меняем видимую грань на середине анимации
+    // Анимация длится 700мс → переключаем на 350мс
+    setTimeout(() => {
+      setShowBack(nextFlipped);
+    }, 350);
   };
 
   return (
@@ -112,18 +123,19 @@ export default function UnboxingCard({ card }: Props) {
           ref={wrapperRef}
           className="w-full h-full relative"
           style={{
-            transform: 'rotateX(0deg) rotateY(0deg)',
-            transition: 'transform 0.4s ease-out',
+            transform: isFlipped ? 'rotateY(180deg)' : 'rotateX(0deg) rotateY(0deg)',
+            transition: 'transform 0.7s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
+            transformStyle: 'preserve-3d',
           }}
         >
           {/* ---- FRONT ---- */}
           <div
             className={`absolute inset-0 rounded-3xl bg-gradient-to-b from-gray-900 via-gray-900 to-gray-950 border-2 overflow-hidden flex flex-col justify-between p-5 ${style.border}`}
             style={{
-              opacity: isFlipped ? 0 : 1,
-              pointerEvents: isFlipped ? 'none' : 'auto',
-              transition: 'opacity 0.15s ease-in-out',
-              visibility: isFlipped ? 'hidden' : 'visible',
+              opacity: showBack ? 0 : 1,
+              pointerEvents: showBack ? 'none' : 'auto',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
             }}
           >
             <div
@@ -177,10 +189,11 @@ export default function UnboxingCard({ card }: Props) {
           <div
             className="absolute inset-0 rounded-3xl bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 border-2 border-amber-500/40 shadow-2xl p-6 flex flex-col justify-between overflow-hidden"
             style={{
-              opacity: isFlipped ? 1 : 0,
-              pointerEvents: isFlipped ? 'auto' : 'none',
-              transition: 'opacity 0.15s ease-in-out',
-              visibility: isFlipped ? 'visible' : 'hidden',
+              opacity: showBack ? 1 : 0,
+              pointerEvents: showBack ? 'auto' : 'none',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              transform: 'rotateY(180deg)',
             }}
           >
             <div className="absolute inset-0 bg-[radial-gradient(#f59e0b_1px,transparent_1px)] [background-size:16px_16px] opacity-10" />
