@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Sparkles, Wallet, Zap, LayoutGrid, Search } from 'lucide-react';
-import Card4K, { type Card, type Rarity } from './components/Card4K';
+import Card4K, { type Rarity } from './components/Card4K';
 import { CARDS } from './data/cards';
 
 function App() {
